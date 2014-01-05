@@ -46,9 +46,9 @@ try:
     ext_modules = [
         Extension('streamingds.countminsketch.countminsketch',
                   sources=['streamingds/countminsketch/countminsketch.py'],
-                  extra_compile_args=["-O3", "-Wall",
-                                      "-Wno-strict-prototypes"],
-                  libraries=["m"]
+                  extra_compile_args=['-O3', '-Wall',
+                                      '-Wno-strict-prototypes'],
+                  libraries=['m']
                   )
     ]
     print('Using Cython to build the optimized version')
@@ -56,6 +56,7 @@ except ImportError:
     cython = None
 
 if not cython and not PYPY:
+    print('Trying to build the generated Cython files')
     # don't build the C extensions when running on pypy
     from distutils.command.build_ext import build_ext as c_b_ext
     from distutils.errors import CCompilerError
@@ -70,11 +71,11 @@ if not cython and not PYPY:
                         DistutilsPlatformError)
 
     ext_modules = [
-        Extension('streamingds.countminsketch',
-                  sources=['streamingds/countminsketch.c'],
-                  extra_compile_args=["-O3", "-Wall",
-                                      "-Wno-strict-prototypes"],
-                  libraries=["m"]
+        Extension('streamingds.countminsketch.countminsketch',
+                  sources=['streamingds/countminsketch/countminsketch.c'],
+                  extra_compile_args=['-O3', '-Wall',
+                                      '-Wno-strict-prototypes'],
+                  libraries=['m']
                   )
     ]
 
@@ -115,9 +116,9 @@ if not cython and not PYPY:
             except DistutilsPlatformError:
                 e = sys.exc_info()[1]
                 sys.stdout.write('%s\n' % str(e))
-                a = "Extension modules"
-                b = " There was an issue with your platform configuration"
-                c = " - see above."
+                a = 'Extension modules'
+                b = ' There was an issue with your platform configuration'
+                c = ' - see above.'
                 warnings.warn(self.warning_message % (a, b, c))
 
         def build_extension(self, ext):
@@ -128,14 +129,14 @@ if not cython and not PYPY:
                 except build_errors:
                     e = sys.exc_info()[1]
                     sys.stdout.write('%s\n' % str(e))
-                    a = "The %s extension module" % name
-                    b = ("The output above this warning shows how the " +
-                         "compilation failed")
+                    a = 'The %s extension module' % name
+                    b = ('The output above this warning shows how the ' +
+                         'compilation failed')
                     warnings.warn(self.warning_message % (a, b))
             else:
-                a = "The %s extension module" % name
-                b = ("Please use Python >= 2.4 to take advantage of the " +
-                     "extension")
+                a = 'The %s extension module' % name
+                b = ('Please use Python >= 2.4 to take advantage of the ' +
+                     'extension')
                 warnings.warn(self.warning_message % (a, b))
 
     cmdclass = {'build_ext': cmd_class}
