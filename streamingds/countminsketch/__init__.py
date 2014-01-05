@@ -16,5 +16,6 @@
 #
 #
 from streamingds.countminsketch.countminsketch import CountMinSketch
+from streamingds.countminsketch.countminsketch import CountMeanSketch
 
-__all__ = ['CountMinSketch']
+__all__ = ['CountMinSketch', 'CountMeanSketch']

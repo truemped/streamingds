@@ -43,6 +43,16 @@ multiply_shift = lambda m, a, x: ((a * x) & int_mask) >> (int_size - m)
 random_odd_int = lambda: (int(random.getrandbits(int_size - 2))) << 1 | 1
 
 
+def median(values):
+    values.sort()
+    if len(values) % 2 == 1:
+        return values[(len(values) + 1) // 2 - 1]
+    else:
+        lower = values[len(values) // 2 - 1]
+        upper = values[len(values) // 2]
+        return (float(lower + upper)) // 2
+
+
 class CountMinSketch(object):
     """A count-min sketch to track counts of keys in a stream.
     """
@@ -233,3 +243,47 @@ class CountMinSketch(object):
         vals.reverse()
         r = dict([(i, vals[i]) for i in range(len(vals))])
         return r
+
+
+class CountMeanSketch(CountMinSketch):
+    """A `Count-Mean Sketch`."""
+
+    def __init__(self, delta, epsilon, k):
+        """Setup a new count-mean sketch."""
+        super(CountMeanSketch, self).__init__(delta, epsilon, k)
+        self.n = 0
+
+    def update(self, key, increment=1):
+        self.n += 1
+        super(CountMeanSketch, self).update(key, increment=increment)
+
+    def get(self, key):
+        """Fetches the sketch estimate for the given key
+
+        Parameters
+        ----------
+        key : string
+            The item to produce an estimate for
+
+        Returns
+        -------
+        estimate : int
+            The best estimate of the count for the given key based on the
+            sketch
+
+        Examples
+        --------
+        >>> s = CountMinSketch(10**-7, 0.005, 40)
+        >>> s.update('http://www.cnn.com/', 1)
+        >>> s.get('http://www.cnn.com/')
+        1
+        """
+        ix = abs(hash(key))
+        e = [0] * len(self.hash_functions)
+        for i in range(len(self.hash_functions)):
+            hf = self.hash_functions[i]
+            j = multiply_shift(self.lg_width, hf, ix)
+            sketchCounter = self.count[i][j]
+            noiseEstimation = (self.n - sketchCounter) / (self._width - 1)
+            e[i] = sketchCounter - noiseEstimation
+        return median(e)
