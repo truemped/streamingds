@@ -23,15 +23,16 @@ import os
 import sys
 import warnings
 
-from distutils.extension import Extension
-
 try:
     # Use setuptools if available, for install_requires (among other things).
     import setuptools
     from setuptools import setup
+    from setuptools import Extension
 except ImportError:
     setuptools = None
     from distutils.core import setup
+    from distutils.extension import Extension
+
 
 PY2 = sys.version_info[0] == 2
 PYPY = hasattr(sys, 'pypy_version_info')
