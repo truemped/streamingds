@@ -82,7 +82,8 @@ def test_random_sketch(k, amount_keys, replays):
             results[key] += n
             c.update(key, n)
 
-    exp = heapq.nlargest(k, [(v, kk) for (kk, v) in results.iteritems()])
+    exp_results = dict([(v, kk) for (kk, v) in results.iteritems()])
+    exp = heapq.nlargest(k, exp_results.items())
     ranking = c.get_ranking()
     try:
         assert len(exp) == len(ranking)
