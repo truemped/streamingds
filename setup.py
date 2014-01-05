@@ -44,8 +44,8 @@ try:
     from Cython.Distutils import build_ext as cmd_class
     cmdclass = {'build_ext': cmd_class}
     ext_modules = [
-        Extension('streamingds.countminsketch',
-                  sources=['streamingds/countminsketch.pyx'],
+        Extension('streamingds.countminsketch.countminsketch',
+                  sources=['streamingds/countminsketch/countminsketch.py'],
                   extra_compile_args=["-O3", "-Wall",
                                       "-Wno-strict-prototypes"],
                   libraries=["m"]
