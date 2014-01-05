@@ -148,7 +148,7 @@ class CountMinSketch(object):
             j = multiply_shift(self.lg_width, hf, ix)
             self.count[i][j] = (self.count[i][j] + increment)
             est = min(est, self.count[i][j])
-        self.update_heap(self.get(key))
+        self.update_heap(key, self.get(key))
 
     def get(self, key):
         """Fetches the sketch estimate for the given key
