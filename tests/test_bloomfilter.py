@@ -18,13 +18,38 @@
 from __future__ import (absolute_import, division, print_function,
                         with_statement)
 
+from random import randint
+
 import pytest
 
 from streamingds.bloomfilter import BloomFilter
 
 
-@pytest.mark.onlyme
 def test_simple_bloomfilter():
     bf = BloomFilter(100)
     bf.add('test')
     assert 'test' in bf
+
+    bf.add('anothertest')
+    assert 'anothertest' in bf
+
+    assert 'notthere' not in bf
+
+
+@pytest.mark.parametrize("capacity",
+                         [(randint(1000, 10000)) for _ in range(10)]
+                         )
+def test_bloom_filter(capacity):
+    replays = randint(0, capacity)
+
+    bf = BloomFilter(capacity)
+
+    keys = []
+    for i in range(replays):
+        key = 'bloom-filter-key-%s' % i
+        keys.append(key)
+        bf.add(key)
+
+    for key in keys:
+        assert key in bf
+        assert 'not-%s' % key not in bf
