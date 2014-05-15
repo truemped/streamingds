@@ -45,8 +45,8 @@ try:
     from Cython.Distutils import build_ext as cmd_class
     cmdclass = {'build_ext': cmd_class}
     ext_modules = [
-        Extension('streamingds.countminsketch.countminsketch',
-                  sources=['streamingds/countminsketch/countminsketch.py'],
+        Extension('streamingds.countminsketch',
+                  sources=['streamingds/countminsketch.py'],
                   extra_compile_args=['-O3', '-Wall',
                                       '-Wno-strict-prototypes'],
                   libraries=['m']
@@ -72,8 +72,8 @@ if not cython and not PYPY:
                         DistutilsPlatformError)
 
     ext_modules = [
-        Extension('streamingds.countminsketch.countminsketch',
-                  sources=['streamingds/countminsketch/countminsketch.c'],
+        Extension('streamingds.countminsketch',
+                  sources=['streamingds/countminsketch.c'],
                   extra_compile_args=['-O3', '-Wall',
                                       '-Wno-strict-prototypes'],
                   libraries=['m']
@@ -166,7 +166,10 @@ setup(
     packages=['streamingds', 'streamingds.countminsketch'],
 
     install_requires=[
-        'bitarray'
+        'bitarray',
+        'bitstring',
+        'pyhashxx',
+        'cytoolz'
     ],
 
     tests_require=tests_require,

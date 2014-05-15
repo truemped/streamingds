@@ -26,7 +26,6 @@ from random import randint
 from streamingds.countminsketch import CountMinSketch
 
 
-@pytest.mark.onlyme
 def test_simple_count_min_sketch():
     c = CountMinSketch(10 ** -7, 0.01, 50)
 
@@ -73,18 +72,18 @@ def test_random_sketch(k, amount_keys, replays):
     tests = []
     results = defaultdict(int)
 
-    c = CountMinSketch(10 ** -7, 0.01, k)
+    cms = CountMinSketch(10 ** -7, 0.01, k)
     for i in range(replays):
         for i in range(amount_keys):
             key = 'random-key-%s' % i
             n = randint(10, 1000000)
             tests.append((i, n))
             results[key] += n
-            c.update(key, n)
+            cms.update(key, n)
 
     exp_results = dict([(v, kk) for (kk, v) in results.iteritems()])
     exp = heapq.nlargest(k, exp_results.items())
-    ranking = c.get_ranking()
+    ranking = cms.get_ranking()
     try:
         assert len(exp) == len(ranking)
         for i, (amnt, key) in enumerate(exp):

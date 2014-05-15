@@ -27,23 +27,17 @@ from __future__ import (absolute_import, division, print_function,
                         with_statement)
 
 import math
-import random
 import sys
 
+from streamingds.hashing import Hashing
 from streamingds.heap import Heap
 
 
-int_size = len(bin(sys.maxint)) - 1
-int_mask = (1 << int_size) - 1
 int_ceil = lambda x: int(math.ceil(x))
-
-
 log2 = lambda x: math.log(x) / math.log(2.0)
-multiply_shift = lambda m, a, x: ((a * x) & int_mask) >> (int_size - m)
-random_odd_int = lambda: (int(random.getrandbits(int_size - 2))) << 1 | 1
 
 
-class CountMinSketch(object):
+class CountMinSketch(Hashing):
     """A count-min sketch to track counts of keys in a stream.
     """
 
@@ -88,9 +82,10 @@ class CountMinSketch(object):
             raise ValueError('k must be a positive integer')
 
         self.k = k
-        self._width = int_ceil(math.e / epsilon)
-        self._depth = int_ceil(math.log(1.0 / delta))
-        self.lg_width = int(math.ceil(log2(float(self._width))))
+        w = int(math.ceil(math.e / epsilon))
+        d = int(math.ceil(math.log(1.0 / delta)))
+
+        super(CountMinSketch, self).__init__(w, d)
 
         self.known_keys = {}
         self.top_est = {}
@@ -104,19 +99,9 @@ class CountMinSketch(object):
         function.
         """
         if not hasattr(self, '_count'):
-            rounded_width = 1 << self.lg_width
-            self._count = [[0] * rounded_width for _ in range(self._depth)]
+            self._count = [[0] * self.slices
+                           for _ in range(self.bits_per_slice)]
         return self._count
-
-    @property
-    def hash_functions(self):
-        """A simple property that can be changed in order to provide some kind
-        of persistence.
-        """
-        if not hasattr(self, '_hash_functions'):
-            self._hash_functions = [random_odd_int()
-                                    for _ in range(self._depth)]
-        return self._hash_functions
 
     @property
     def heap(self):
@@ -141,13 +126,11 @@ class CountMinSketch(object):
         >>> s = CountMinSketch(10**-7, 0.005, 40)
         >>> s.update('http://www.cnn.com/', 1)
         """
-        ix = abs(hash(key))
+        hashes = self.hash_values(key)
         est = sys.maxint
-        for i in range(len(self.hash_functions)):
-            hf = self.hash_functions[i]
-            j = multiply_shift(self.lg_width, hf, ix)
-            self.count[i][j] = (self.count[i][j] + increment)
-            est = min(est, self.count[i][j])
+        for i, h in enumerate(hashes):
+            self.count[i][h] = self.count[i][h] + increment
+            est = min(est, self.count[i][h])
         self.update_heap(key, self.get(key))
 
     def get(self, key):
@@ -171,12 +154,10 @@ class CountMinSketch(object):
         >>> s.get('http://www.cnn.com/')
         1
         """
-        ix = abs(hash(key))
+        hashes = self.hash_values(key)
         r = sys.maxint
-        for i in range(len(self.hash_functions)):
-            hf = self.hash_functions[i]
-            j = multiply_shift(self.lg_width, hf, ix)
-            r = min(r, self.count[i][j])
+        for i, h in enumerate(hashes):
+            r = min(r, self.count[i][h])
         return r
 
     def update_heap(self, key, est):
