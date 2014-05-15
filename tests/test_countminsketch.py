@@ -26,7 +26,6 @@ from random import randint
 from streamingds.countminsketch import CountMinSketch
 
 
-@pytest.mark.onlyme
 def test_simple_count_min_sketch():
     c = CountMinSketch(10 ** -7, 0.01, 50)
 
