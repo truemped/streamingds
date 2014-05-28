@@ -163,7 +163,7 @@ setup(
     author_email='truemped@gmail.com',
 
     description='',
-    packages=['streamingds', 'streamingds.countminsketch'],
+    packages=['streamingds'],
 
     install_requires=[
         'bitarray',
