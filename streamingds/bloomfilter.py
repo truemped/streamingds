@@ -51,7 +51,6 @@ class BloomFilter(Hashing):
 
         self._capacity = capacity
         self._error_rate = error_rate
-        self._count = 0
 
         num_bits_per_slice = int(math.ceil(math.log(1.0 / error_rate, 2)))
         num_slices = int(math.ceil(
@@ -60,12 +59,22 @@ class BloomFilter(Hashing):
 
         super(BloomFilter, self).__init__(num_slices, num_bits_per_slice)
 
-        self._bitarray = BitArray(num_slices)
+    @property
+    def bitarray(self):
+        if not hasattr(self, '_bitarray'):
+            self._bitarray = BitArray(self.slices)
+        return self._bitarray
 
     def __contains__(self, key):
         """Check membership of a key in this filter."""
-        return self._bitarray.all(1, self.hash_values(key))
+        return self.bitarray.all(1, self.hash_values(key))
 
     def add(self, key):
         """Add a key to this filter."""
-        self._bitarray.set(1, self.hash_values(key))
+        self.bitarray.set(1, self.hash_values(key))
+
+    def __len__(self):
+        """Get the number of elements in the filter."""
+        m = self.bitarray.count(1)
+        a = (self.slices * math.log(1 - (float(m) / self.slices)))
+        return - a / self.bits_per_slice
