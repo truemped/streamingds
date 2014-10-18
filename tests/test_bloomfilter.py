@@ -36,7 +36,7 @@ def test_simple_bloomfilter():
 
 
 @pytest.mark.parametrize("capacity, max_keys",
-                         [(randint(100, 1000),
+                         [(randint(10000, 100000),
                            randint(1, 50)) for _ in range(100)]
                          )
 def test_bloom_filter(capacity, max_keys):
