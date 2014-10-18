@@ -57,4 +57,5 @@ def test_bloom_filter(capacity, max_keys):
             errors.append(1)
 
     if len(errors) > 0:
-        assert len(errors) / float(capacity) <= 0.01
+        actual = len(errors) / float(capacity)
+        assert actual <= 0.01

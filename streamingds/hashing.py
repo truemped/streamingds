@@ -31,16 +31,24 @@ class Hashing(object):
 
     def __init__(self, num_slices, num_bits_per_slice):
         """Initialize the array of `hashfunctions`."""
-        self._num_bits_per_slice = num_bits_per_slice
-        self._num_slices = num_slices
+        self.bits_per_slice = num_bits_per_slice
+        self.slices = num_slices
 
     @property
     def bits_per_slice(self):
         return self._num_bits_per_slice
 
+    @bits_per_slice.setter
+    def bits_per_slice(self, value):
+        self._num_bits_per_slice = value
+
     @property
     def slices(self):
         return self._num_slices
+
+    @slices.setter
+    def slices(self, value):
+        self._num_slices = value
 
     @property
     def seeds(self):

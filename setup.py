@@ -154,6 +154,7 @@ if sys.version_info < (2, 7):
 
 extras_require = {}
 extras_require['test'] = tests_require
+extras_require['redis'] = ['redis', 'hiredis']
 
 setup(
     name='streamingds',
@@ -166,7 +167,6 @@ setup(
     packages=['streamingds'],
 
     install_requires=[
-        'bitarray',
         'bitstring',
         'pyhashxx',
         'cytoolz'
