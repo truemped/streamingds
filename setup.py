@@ -164,7 +164,7 @@ setup(
     author_email='truemped@gmail.com',
 
     description='',
-    packages=['streamingds'],
+    packages=['streamingds', 'streamingds.redis'],
 
     install_requires=[
         'bitstring',
