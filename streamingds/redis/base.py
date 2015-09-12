@@ -80,8 +80,10 @@ class RedisList(object):
         self._prefix = prefix
 
         if not self._redis.exists(prefix):
+            pipeline = self._redis.pipeline()
             for _ in range(length):
-                self._redis.lpush(prefix, 0)
+                pipeline.lpush(prefix, 0)
+            pipeline.execute()
 
     def __getitem__(self, idx):
         return int(self._redis.lrange(self._prefix, idx, idx)[0])

@@ -54,11 +54,16 @@ class RedisBitArray(object):
             self._redis.set(key, '\0' * s)
 
     def set(self, value, bits):
+        pipeline = self._redis.pipeline()
         for bit in bits:
-            self._redis.setbit(self._key, bit, value)
+            pipeline.setbit(self._key, bit, value)
+        pipeline.execute()
 
     def all(self, value, bits):
-        return all([self._redis.getbit(self._key, bit) for bit in bits])
+        pipeline = self._redis.pipeline()
+        for bit in bits:
+            pipeline.getbit(self._key, bit)
+        return all(pipeline.execute())
 
     def count(self, value):
         return self._redis.bitcount(self._key)
