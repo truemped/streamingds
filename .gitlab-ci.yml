@@ -1,0 +1,11 @@
+image: python:2.7
+
+test:
+  script:
+  # this configures django application to use attached postgres database that is run on `postgres` host
+  - apt-get update -qy
+  - apt-get install -y python-dev python-pip
+  - pip install -r requirements.txt
+  - pip install -r requirements-test.txt
+  - python setup.py develop
+  - py.test -m 'not slowtest'
