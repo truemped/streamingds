@@ -85,7 +85,7 @@ class CountMinSketch(Hashing):
         w = int(math.ceil(math.e / epsilon))
         d = int(math.ceil(math.log(1.0 / delta)))
 
-        super(CountMinSketch, self).__init__(w, d)
+        super(CountMinSketch, self).__init__(d, w)
 
         self.known_keys = {}
         self.top_est = {}
@@ -99,8 +99,8 @@ class CountMinSketch(Hashing):
         function.
         """
         if not hasattr(self, '_count'):
-            self._count = [[0] * self.slices
-                           for _ in range(self.bits_per_slice)]
+            self._count = [[0] * self.bits
+                           for _ in range(self.num_hash_fns)]
         return self._count
 
     @property

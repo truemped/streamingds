@@ -18,6 +18,7 @@
 from __future__ import (absolute_import, division, print_function,
                         with_statement)
 
+from hashlib import sha224
 from random import randint
 
 import pytest
@@ -56,6 +57,34 @@ def test_bloom_filter(capacity, max_keys):
         if 'this-should-not-%s' % key in bf:
             errors.append(1)
 
-    if len(errors) > 0:
-        actual = len(errors) / float(capacity)
-        assert actual <= 0.01
+    actual = len(errors) / float(capacity)
+    assert actual <= 0.01
+
+
+def gethash(key):
+    return sha224(str(key)).hexdigest()
+
+
+def generate_url(n):
+    return 'http://www.news.de/section/subsection/%d/%s.html' % (n, gethash(n))
+
+
+@pytest.mark.parametrize("n, r",
+                         [(n, r)
+                          for n in [1000, 10000, 100000, 1000000]
+                          for r in [0.1, 0.01, 0.001, 0.0001, 0.00001]])
+def test_bloomfilter_urls(n, r):
+    bf = BloomFilter(n, error_rate=r)
+    misses = []
+    for key in xrange(n):
+        url = generate_url(key)
+        if url in bf:
+            # false positive!
+            misses.append(key)
+        else:
+            bf.add(url)
+
+    observed_count = len(misses)
+    observed_rate = observed_count / float(n)
+
+    assert observed_rate <= r

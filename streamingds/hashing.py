@@ -29,42 +29,42 @@ class Hashing(object):
     count-min sketch or bloomfilters.
     """
 
-    def __init__(self, num_slices, num_bits_per_slice):
+    def __init__(self, num_hash_fns, bits):
         """Initialize the array of `hashfunctions`."""
-        self.bits_per_slice = num_bits_per_slice
-        self.slices = num_slices
+        self.bits = bits
+        self.num_hash_fns = num_hash_fns
 
     @property
-    def bits_per_slice(self):
-        return self._num_bits_per_slice
+    def bits(self):
+        return self._bits
 
-    @bits_per_slice.setter
-    def bits_per_slice(self, value):
-        self._num_bits_per_slice = value
+    @bits.setter
+    def bits(self, value):
+        self._bits = value
 
     @property
-    def slices(self):
-        return self._num_slices
+    def num_hash_fns(self):
+        return self._num_hash_fns
 
-    @slices.setter
-    def slices(self, value):
-        self._num_slices = value
+    @num_hash_fns.setter
+    def num_hash_fns(self, value):
+        self._num_hash_fns = value
 
     @property
     def seeds(self):
         if not hasattr(self, '_seeds'):
             self._seeds = [random.randint(0, 2 ** 32)
-                           for _ in range(self.bits_per_slice)]
+                           for _ in range(self.num_hash_fns)]
         return self._seeds
 
-    def _gen_hash_fn(self, seed, slices):
-        return lambda x: hashxx(str(x), seed=seed) % slices
+    def _gen_hash_fn(self, seed, num_hash_fns):
+        return lambda x: hashxx(str(x), seed=seed) % self.bits
 
     @property
     def hash_functions(self):
         if not hasattr(self, '_hash_functions'):
             self._hash_functions = [
-                self._gen_hash_fn(s, self.slices)
+                self._gen_hash_fn(s, self.num_hash_fns)
                 for s in self.seeds]
         return self._hash_functions
 
