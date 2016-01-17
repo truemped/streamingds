@@ -53,6 +53,7 @@ def generate_url(n):
     return 'http://www.news.de/section/subsection/%d/%s.html' % (n, gethash(n))
 
 
+@pytest.mark.slowtest
 @pytest.mark.parametrize("n, r",
                          [(n, r)
                           for n in [1000, 10000, 100000, 1000000]
