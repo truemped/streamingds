@@ -3,13 +3,9 @@ Streaming Data Structures
 
 This library contains a set of sketching or hash-based algorithms.
 
-|TravisImage|_ |RequiresIo|_
+[![Build Status](https://travis-ci.org/truemped/streamingds.svg?branch=master)](https://travis-ci.org/truemped/streamingds)
 
-.. |TravisImage| image:: https://travis-ci.org/truemped/streamingds.png?branch=master
-.. _TravisImage: https://travis-ci.org/truemped/streamingds
-
-.. |RequiresIo| image:: https://requires.io/github/truemped/streamingds/requirements.svg?branch=master
-.. _RequiresIo: https://requires.io/github/truemped/streamingds/requirements/?branch=master
+[![Requirements Status](https://requires.io/github/truemped/streamingds/requirements.svg?branch=master)](https://requires.io/github/truemped/streamingds/requirements/?branch=master)
 
 
 Bloom Filter
